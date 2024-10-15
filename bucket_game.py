@@ -1,3 +1,7 @@
+import math
+from pydoc import pager
+
+
 State = tuple[int, list[str | int]]  # Tuple of player (whose turn it is),
                                      # and the buckets (as str)
                                      # or the number in a bucket
@@ -43,3 +47,49 @@ class Game:
             print(f'P1\'s utility is {self.utility(state, 0)}')
         else:
             print(f'it is P{self.to_move(state)+1}\'s turn')
+
+
+
+def minimax_search(game: Game, state: State) -> Action | None:
+    player = game.to_move(state)
+    value, move = max_value(game, state) # do a direct call instead. 
+    return move
+
+
+def max_value(game: Game, state: State):
+    if game.is_terminal(state):
+        return game.utility(state, pager), None  #Må huske at utility trenger både state og game sitt state. 
+    v = - math.inf     #float('-inf')
+    #best_move = None
+    for move in game.actions(state):
+        value, _ = min_value(game, game.result(state, move))
+        if value > v:
+            v = value
+            best_move = move
+    return v, best_move
+
+def min_value(game: Game, state: State):
+    if game.is_terminal(state):
+        return game.utility(state, pager), None #Samme her. 
+    v = math.inf       #float('inf')
+    #best_move = None
+    for move in game.actions(state):
+        value, _ = max_value(game, game.result(state, move))
+        if value < v:
+            v = value
+            best_move = move
+    return v, best_move
+
+
+game = Game()
+
+state = game.initial_state()
+game.print(state)
+while not game.is_terminal(state):
+    player = game.to_move(state)
+    action = minimax_search(game, state) # The player whose turn it is
+                                         # is the MAX player
+    print(f'P{player+1}\'s action: {action}')
+    assert action is not None
+    state = game.result(state, action)
+    game.print(state)
