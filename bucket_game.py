@@ -50,17 +50,25 @@ class Game:
 
 
 
+# def minimax_search(game: Game, state: State) -> Action | None:
+#     player = game.to_move(state)
+#     value, move = max_value(game, state) # do a direct call instead. 
+#     return move
+
 def minimax_search(game: Game, state: State) -> Action | None:
     player = game.to_move(state)
-    value, move = max_value(game, state) # do a direct call instead. 
+    if player == 0:
+        value, move = max_value(game, state)  # P1 is maximizing
+    else:
+        value, move = min_value(game, state)  # P2 is minimizing
     return move
+
 
 
 def max_value(game: Game, state: State):
     if game.is_terminal(state):
         return game.utility(state, pager), None  #Må huske at utility trenger både state og game sitt state. 
-    v = - math.inf     #float('-inf')
-    #best_move = None
+    v = - math.inf
     for move in game.actions(state):
         value, _ = min_value(game, game.result(state, move))
         if value > v:
@@ -71,8 +79,7 @@ def max_value(game: Game, state: State):
 def min_value(game: Game, state: State):
     if game.is_terminal(state):
         return game.utility(state, pager), None #Samme her. 
-    v = math.inf       #float('inf')
-    #best_move = None
+    v = math.inf
     for move in game.actions(state):
         value, _ = max_value(game, game.result(state, move))
         if value < v:
