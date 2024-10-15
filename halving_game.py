@@ -47,16 +47,47 @@ class Game:
 
 def minimax_search(game: Game, state: State) -> Action | None:
     next_player = game.to_move(state)
-    value, move = game.max_value(game, state)
+    value, move = max_value(game, state) # do a direct call instead. 
     return move
 
 
-def max_value(game: Game, state: State) -> int:
+def max_value(game: Game, state: State):
     if game.is_terminal(state):
-        return game.utility(state), None
-    for a in game.actions(state)
+        return game.utility(state, game.to_move(state)), None  #Må huske at utility trenger både state og game sitt state. 
+    v = - math.inf     #float('-inf')
+    best_move = None
+    for move in game.actions(state):
+        value, _ = min_value(game, game.result(state, move))
+        if value > v:
+            v = value
+            best_move = move
+    return v, best_move
 
-    assert False, "Not implemented"
+def max_value(game: Game, state: State):
+    if game.is_terminal(state):
+        return game.utility(state, game.to_move(state)), None
+    v = -math.inf  # Max tries to maximize, so starts with the lowest possible value
+    best_move = None
+    for move in game.actions(state):
+        value, _ = min_value(game, game.result(state, move))
+        if value > v:
+            v = value
+            best_move = move
+    return v, best_move  # Make sure return is outside the loop
+
+def min_value(game: Game, state: State):
+    if game.is_terminal(state):
+        return game.utility(state, game.to_move(state)), None #Samme her. 
+    v = math.inf       #float('inf')
+    best_move = None
+    for move in game.actions(state):
+        value, _ = max_value(game, game.result(state, move))
+        if value < v:
+            v = value
+            best_move = move
+
+    return v, best_move
+
 
 game = Game(5)
 
