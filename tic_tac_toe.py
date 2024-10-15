@@ -85,7 +85,6 @@ def minimax_search(game: Game, state: State) -> Action | None:
     value, move = max_value(game, state)  # do a direct call instead.
     return move
 
-
 def max_value(game: Game, state: State):
     if game.is_terminal(state):
         return game.utility(state, game.to_move(state)), None  # Pass the correct player
@@ -97,7 +96,6 @@ def max_value(game: Game, state: State):
             v = value
             best_move = move
     return v, best_move
-
 
 def min_value(game: Game, state: State):
     if game.is_terminal(state):
@@ -111,14 +109,54 @@ def min_value(game: Game, state: State):
             best_move = move
     return v, best_move
 
+
+
+
+
+def alpha_beta_search(game: Game, state: State) -> Action | None:
+    player = game.to_move(state)
+    value, move = max_valueAB(game, state, -math.inf, math.inf)  # do a direct call instead.
+    return move
+
+def max_valueAB(game: Game, state: State, a, b):
+    if game.is_terminal(state):
+        return game.utility(state, game.to_move(state)), None  # Pass the correct player
+    v = -math.inf  # Start with negative infinity
+    for move in game.actions(state):
+        value, _ = min_valueAB(game, game.result(state, move), a, b)
+        if value > v:
+            v = value
+            best_move = move
+            a = max(a,v)
+        if v >= b:
+            return v, best_move
+    return v, best_move
+
+def min_valueAB(game: Game, state: State, a, b):
+    if game.is_terminal(state):
+        return game.utility(state, game.to_move(state)), None  # Pass the correct player
+    v = math.inf  # Start with infinity
+    for move in game.actions(state):
+        value, _ = max_valueAB(game, game.result(state, move), a, b)
+        if value < v:
+            v = value
+            best_move = move
+            b = min(b, v)  # Fix: use min to update beta
+        if v <= a:
+            return v, best_move
+    return v, best_move
+
+
+
 game = Game()
 
 state = game.initial_state()
 game.print(state)
 while not game.is_terminal(state):
     player = game.to_move(state)
-    action = minimax_search(game, state) # The player whose turn it is
-                                         # is the MAX player
+    action =  minimax_search(game, state) # The player whose turn it is
+                                             # is the MAX player
+                                             # Change here, minimax_search or alpha_beta_search
     print(f'P{player+1}\'s action: {action}')
     assert action is not None
     state = game.result(state, action)
