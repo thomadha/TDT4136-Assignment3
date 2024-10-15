@@ -4,6 +4,7 @@ State = tuple[int, int] # Tuple of player (whose turn it is),
                         # and the number to be decreased
 Action = str  # Decrement (number <- number-1) or halve (number <- number / 2)
 
+
 class Game:
     def __init__(self, N: int):
         self.N = N
@@ -11,25 +12,25 @@ class Game:
     def initial_state(self) -> State:
         return 0, self.N
 
-    def to_move(self, state: State) -> int:
+    def to_move(self, state: State) -> int: #which player's turn it is at state s
         player, _ = state
         return player
 
-    def actions(self, state: State) -> list[Action]:
+    def actions(self, state: State) -> list[Action]: #legal actions at state s
         return ['--', '/2']
 
-    def result(self, state: State, action: Action) -> State:
+    def result(self, state: State, action: Action) -> State: #next state after taking action a at state s
         _, number = state
         if action == '--':
             return (self.to_move(state) + 1) % 2, number - 1
         else:
             return (self.to_move(state) + 1) % 2, number // 2  # Floored division
 
-    def is_terminal(self, state: State) -> bool:
+    def is_terminal(self, state: State) -> bool: #is state s an end state?
         _, number = state
         return number == 0
 
-    def utility(self, state: State, player: int) -> float:
+    def utility(self, state: State, player: int) -> float: #the value of the terminal state s for player p
         assert self.is_terminal(state)
         return 1 if self.to_move(state) == player else -1
 
@@ -45,7 +46,16 @@ class Game:
             print(f'it is P{self.to_move(state)+1}\'s turn')
 
 def minimax_search(game: Game, state: State) -> Action | None:
-    # YOUR CODE HERE
+    next_player = game.to_move(state)
+    value, move = game.max_value(game, state)
+    return move
+
+
+def max_value(game: Game, state: State) -> int:
+    if game.is_terminal(state):
+        return game.utility(state), None
+    for a in game.actions(state)
+
     assert False, "Not implemented"
 
 game = Game(5)

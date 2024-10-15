@@ -4,6 +4,7 @@ State = tuple[int, list[str | int]]  # Tuple of player (whose turn it is),
 Action = str | int  # Bucket choice (as str) or choice of number
 
 
+
 class Game:
     def initial_state(self) -> State:
         return 0, ['A', 'B', 'C']
