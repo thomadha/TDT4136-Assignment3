@@ -80,30 +80,30 @@ class Game:
             print(f'It is P{self.to_move(state)+1}\'s turn to move')
 
 
-def minimax_search(game: Game, state: State) -> Action | None:
-    player = game.to_move(state)
-    value, move = max_value(game, state)  # do a direct call instead.
+def minimax_search(game: Game, state: State, player) -> Action | None:
+    #player = game.to_move(state)
+    value, move = max_value(game, state, player)  # do a direct call instead.
     return move
 
-def max_value(game: Game, state: State):
+def max_value(game: Game, state: State, player):
     if game.is_terminal(state):
-        return game.utility(state, game.to_move(state)), None  # Pass the correct player
+        return game.utility(state, player), None  # Pass the correct player
     v = -math.inf  # Start with negative infinity
     best_move = None
     for move in game.actions(state):
-        value, _ = min_value(game, game.result(state, move))
+        value, _ = min_value(game, game.result(state, move), player)
         if value > v:
             v = value
             best_move = move
     return v, best_move
 
-def min_value(game: Game, state: State):
+def min_value(game: Game, state: State, player):
     if game.is_terminal(state):
-        return game.utility(state, game.to_move(state)), None  # Pass the correct player
+        return game.utility(state, player), None  # Pass the correct player
     v = math.inf  # Start with positive infinity
     best_move = None
     for move in game.actions(state):
-        value, _ = max_value(game, game.result(state, move))
+        value, _ = max_value(game, game.result(state, move), player)
         if value < v:
             v = value
             best_move = move
